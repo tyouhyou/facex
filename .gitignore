@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+.vscode
+fer/
+data/fer.data
+
 # Distribution / packaging
 .Python
 build/
