@@ -1,5 +1,5 @@
 from fer import FerData
-from keras.models import Sequential, load_model
+from keras.models import Sequential, load_model, model_from_json
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D, AveragePooling2D
 from keras.preprocessing import image
@@ -27,19 +27,29 @@ class FacialExpress:
         if not os.path.exists(self._data_folder):
             os.makedirs(self._data_folder)
 
-    def load_model(self, model_name='simple_cnn'):
+    def load_saved_model(self, model_name='simple_cnn'):
         '''
         '''
-        self._model = load_model(os.path.join(self._data_folder, model_name))
+        with open(os.path.join(self._data_folder, model_name + '.json'), 'r') as jf:
+            jm = jf.read()
+
+        model = model_from_json(jm)
+        model.load_weights(os.path.join(self._data_folder, model_name + ".h5"))
+
+        model.compile(loss=K.losses.categorical_crossentropy,
+                      optimizer=K.optimizers.Adadelta(),
+                      metrics=['accuracy'])
+
+        self._model = model
         return self._model
 
     def predict(self, img_file, model=None):
         if None == model:
             model = self._model
         if None == model:
-            self._model = model = self.load_model()
+            model = self.load_saved_model()
 
-        img = image.load_img(img_file, False, target_size=(FerData.IMG_WIDTH, FerData.IMG_HEIGHT))
+        img = image.load_img(img_file, color_mode='grayscale', target_size=(FerData.IMG_WIDTH, FerData.IMG_HEIGHT))
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
 
@@ -75,12 +85,17 @@ class FacialExpress:
                   verbose=1,
                   validation_data=(self._test_img, self._test_label))
 
-        model.save_weights(os.path.join(self._data_folder, model_name + ".h5"))
-
         score = model.evaluate(self._test_img, self._test_label, verbose=0)
 
         print('Test loss: ', score[0])
         print('Test accuracy: ', score[1])
+
+        model.save_weights(os.path.join(self._data_folder, model_name + '.h5'))
+        with open(os.path.join(self._data_folder, model_name + ".json"), 'w+') as jf:
+            jf.write(model.to_json())
+
+        self._model = model
+        return self._model
 
     def _get_model_func_by_name(self, model_name='simple_cnn'):
         '''
@@ -108,7 +123,7 @@ class FacialExpress:
         return model
 
     def simple_cnn(self):
-        ''' acc: 0.56
+        ''' acc: 0.60
         '''
 
         model = Sequential()
@@ -127,9 +142,8 @@ class FacialExpress:
         model.add(Flatten())
 
         model.add(Dense(1024, activation='relu'))
-        model.add(Dropout(0.5))
-
-        model.add(Dense(512, activation='relu'))
+        # model.add(Dropout(0.5))
+        model.add(Dense(1024, activation='relu'))
         model.add(Dropout(0.5))
 
         model.add(Dense(self._classes_num, activation='softmax'))
