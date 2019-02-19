@@ -8,6 +8,7 @@ __pycache__/
 
 .vscode
 fer/
+fer+/
 data/fer.data
 
 # Distribution / packaging
