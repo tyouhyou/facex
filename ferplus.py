@@ -1,32 +1,89 @@
 import os
 import csv
 import numpy as np
+import facialexpress as fe
+import pickle
 from PIL import Image
 
-class FerPlus:
-    '''
-    '''
+IMG_WIDTH = 48
+IMG_HEIGHT = 48
+CHANNEL = 1
 
-    def __init__(self):
-        self.IMG_WIDTH = 48
-        self.IMG_HEIGHT = 48
+def extract_imgs(fer_csv='fer\\fer2013.csv', img_folder='fer+\\img'):
+    if not os.path.exists(img_folder):
+        os.makedirs(img_folder)
 
-    def extract_imgs(self, fer_csv='fer\\fer2013.csv', img_folder='fer+\\img'):
-        _fer_csv = fer_csv
-        _fer_p_folder = img_folder
+    with open(fer_csv, mode='r', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        next(reader)
+        idx = 0
+        for row in reader:
+            parr = list(map(float, row[1].split(' ')))
+            pixel = np.asarray(parr).reshape(IMG_HEIGHT, IMG_WIDTH)
+            im = Image.fromarray(pixel).convert('L')
+            imgpath = os.path.join(img_folder, 'fer' + '{0:0>7}'.format(idx) + '.png')
+            im.save(imgpath)
+            idx += 1
 
-        if not os.path.exists(img_folder):
-            os.makedirs(img_folder)
+def load_data(data_file = 'fer+\\data\\fer+.data'):
+    if not os.path.exists(data_file):
+        return load_ferp_data()
+    else :
+        return load_pickle_data(data_file)
 
-        with open(_fer_csv, mode='r', newline='') as csvfile:
-            reader = csv.reader(csvfile, delimiter=',')
-            next(reader)
-            idx = 0
-            for row in reader:
-                parr = list(map(float, row[1].split(' ')))
-                pixel = np.asarray(parr).reshape(self.IMG_HEIGHT, self.IMG_WIDTH)
-                im = Image.fromarray(pixel).convert('L')
-                imgpath = os.path.join(_fer_p_folder, 'fer' + '{0:0>7}'.format(idx) + '.png')
-                im.save(imgpath)
-                idx += 1
-                
+def load_ferp_data(fernewcsv=r'fer+\\fer2013new.csv', img_folder=r'fer+\\img', 
+                   pickle_file=r'fer+\\data\\fer+.data', save_data=True):
+    with open(fernewcsv, mode='r') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        next(reader)
+        
+        classes_num = 9
+        train_labels = []
+        train_images = []
+        test_labels = []
+        test_images = []
+        val_labels = []
+        val_images = []
+        for row in reader:
+            if (10 == row[11]): continue
+
+            classes = np.asarray([row[i+2] for i in range(classes_num)], dtype='float32')
+            imgfile = os.path.join(img_folder, row[1])
+            pixels = (np.asarray(Image.open(imgfile), dtype='float32') / 255).reshape(IMG_HEIGHT,
+                                                                                      IMG_WIDTH,
+                                                                                      CHANNEL)
+
+            if 'Training' == row[0]:
+                train_labels.append(classes)
+                train_images.append(pixels)
+            elif 'PublicTest' == row[0]:
+                val_labels.append(classes)
+                val_images.append(pixels)
+            elif 'PrivateTest' == row[0]:
+                test_labels.append(classes)
+                test_images.append(pixels)
+
+        ferp_data = {
+            'channels_first': False,
+            'classes_num': classes_num,
+            'input_shape': (IMG_WIDTH, IMG_HEIGHT, CHANNEL),
+            'train_data': (np.asarray(train_labels), np.asarray(train_images)),
+            'test_data': (np.asarray(test_labels), np.asarray(test_images)),
+            'val_data' : (np.asarray(val_labels), np.asarray(val_images))
+        }
+
+        if save_data:
+            df = os.path.dirname(pickle_file)
+            if not os.path.exists(df):
+                os.makedirs(df)
+
+            with open(pickle_file, 'wb+') as pf:
+                pickle.dump(ferp_data, pf)
+
+        return ferp_data
+
+def load_pickle_data(pickle_file='fer+\\data\\fer+.data'):
+    with open(pickle_file, 'rb') as pf:
+        pickle_data = pickle.load(pf)
+
+    return pickle_data
