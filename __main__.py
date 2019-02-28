@@ -1,20 +1,15 @@
-from facialexpress import FacialExpress as fe
 import ferplus as fp
 import datetime
 
 if __name__ == "__main__":
-    # fp.extract_imgs()
-
-    fer = fe()
-    # dataset = fp.load_data()
-    fer.load_model(dataset=None)
+    model = fp.load_model()
 
     print(datetime.datetime.now())
 
-    fer.predict_image(r'e:\\temp\\a.jpg')
-    fer.predict_image(r'e:\\temp\\b.png')
-    fer.predict_image(r'e:\\temp\\c.png')
-    fer.predict_image(r'e:\\temp\\d.jpg')
-    fer.predict_image(r'e:\\temp\\e.jpg')
+    print(fp.predict(r'e:\\temp\\a.jpg', model=model))
+    print(fp.predict(r'e:\\temp\\b.png', model=model))
+    print(fp.predict(r'e:\\temp\\c.png', model=model))
+    print(fp.predict(r'e:\\temp\\d.jpg', model=model))
+    print(fp.predict(r'e:\\temp\\e.jpg', model=model))
 
     print(datetime.datetime.now())

@@ -1,13 +1,37 @@
 import os
 import csv
 import numpy as np
-import facialexpress as fe
 import pickle
 from PIL import Image
+from kmodel import KModel as km
 
 IMG_WIDTH = 48
 IMG_HEIGHT = 48
 CHANNEL = 1
+
+def load_model(model_data_folder='data', model_data_name='fer+_simple_cnn'):
+    '''
+    make model for facial express
+    '''
+    m = km()
+    model = None
+
+    if (os.path.exists(os.path.join(model_data_folder, model_data_name + '.h5')) and
+        os.path.exists(os.path.join(model_data_folder, model_data_name + '.json'))):
+        model = m.load_model(data_name=model_data_name)
+    else:
+        dataset = load_data()
+        model = km().make_model(dataset, data_name='fer+_simple_cnn')
+
+    return model
+
+def predict(data, width=48, height=48, model=None):
+    if type(data) is str:
+        result = km().predict_image(data, model=model, target_height=48, target_width=48)
+    else:
+        result = km().predict(data, model)
+
+    return result
 
 def extract_imgs(fer_csv='fer\\fer2013.csv', img_folder='fer+\\img'):
     if not os.path.exists(img_folder):
