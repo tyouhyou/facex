@@ -7,13 +7,13 @@ IMG_WIDTH = 48
 IMG_HEIGHT = 48
 CHANNEL = 1
 
-def load_data(data_file=r'fer\\data\\fer.data'):
+def load_data(data_file=r'datasets\\fer\\data\\fer.data'):
     if (os.path.exists(data_file)):
         return load_pickle_data(data_file)
     else:
         return load_fer_data()
     
-def load_fer_data(fer_file=r'fer\\fer2013.csv', save_to_pickle=True, data_file=r'fer\\data\\fer.data'):
+def load_fer_data(fer_file=r'datasets\\fer\\fer2013.csv', save_to_pickle=True, data_file=r'datasets\\fer\\data\\fer.data'):
     train_label = []
     train_img = []
     test_label = []
@@ -52,7 +52,7 @@ def load_fer_data(fer_file=r'fer\\fer2013.csv', save_to_pickle=True, data_file=r
     
     return fer_data
 
-def load_pickle_data(data_file=r'fer\\data\\fer.data'):
+def load_pickle_data(data_file=r'datasets\\fer\\data\\fer.data'):
     with open(data_file, 'rb') as pk:
         pickle_data = pickle.load(pk)
 

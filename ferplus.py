@@ -36,7 +36,7 @@ def predict(data, width=48, height=48, model=None):
 
     return rst
 
-def extract_imgs(fer_csv='fer\\fer2013.csv', img_folder='fer+\\img'):
+def extract_imgs(fer_csv='datasets\\fer\\fer2013.csv', img_folder='datasets\\fer+\\img'):
     if not os.path.exists(img_folder):
         os.makedirs(img_folder)
 
@@ -52,14 +52,14 @@ def extract_imgs(fer_csv='fer\\fer2013.csv', img_folder='fer+\\img'):
             im.save(imgpath)
             idx += 1
 
-def load_data(data_file = 'fer+\\data\\fer+.data'):
+def load_data(data_file = 'datasets\\fer+\\data\\fer+.data'):
     if not os.path.exists(data_file):
         return load_ferp_data()
     else :
         return load_pickle_data(data_file)
 
-def load_ferp_data(fernewcsv=r'fer+\\fer2013new.csv', img_folder=r'fer+\\img', 
-                   pickle_file=r'fer+\\data\\fer+.data', save_data=True):
+def load_ferp_data(fernewcsv=r'datasets\\fer+\\fer2013new.csv', img_folder=r'datasets\\fer+\\img', 
+                   pickle_file=r'datasets\\fer+\\data\\fer+.data', save_data=True):
     with open(fernewcsv, mode='r') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         next(reader)
@@ -109,7 +109,7 @@ def load_ferp_data(fernewcsv=r'fer+\\fer2013new.csv', img_folder=r'fer+\\img',
 
         return ferp_data
 
-def load_pickle_data(pickle_file='fer+\\data\\fer+.data'):
+def load_pickle_data(pickle_file='datasets\\fer+\\data\\fer+.data'):
     with open(pickle_file, 'rb') as pf:
         pickle_data = pickle.load(pf)
 

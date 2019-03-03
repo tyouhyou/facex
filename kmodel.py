@@ -5,10 +5,9 @@ import numpy as np
 import h5py
 import keras as K
 from keras import backend as bk
-from keras.models import Sequential, load_model, model_from_json
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D, AveragePooling2D
+from keras.models import load_model, model_from_json
 from keras.preprocessing import image
+import knm
 
 class KModel:
     ''' 
@@ -19,8 +18,8 @@ class KModel:
         '''
         '''
         self._models = {
-            'simple_cnn' : (self.simple_cnn, 256, 30),
-            'vgg16'     : (self.vgg16, 128, 12),
+            'simple_cnn' : (knm.simple_cnn, 256, 30),
+            'vgg16'     : (knm.vgg16, 128, 12),
         }
 
         self._model = None
@@ -133,63 +132,3 @@ class KModel:
         '''
         return self._models[model_name]
 
-    def simple_cnn(self, classes_num, input_shape):
-        '''
-        '''
-        model = Sequential()
-        model.add(Conv2D(64, (3, 3), activation='relu', input_shape=input_shape))
-        model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2)))
-        model.add(Dropout(0.25))
-
-        model.add(Conv2D(128, (3, 3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2)))
-        model.add(Dropout(0.25))
-
-        model.add(Conv2D(256, (3, 3), activation='relu'))
-        model.add(MaxPooling2D(pool_size=(2,2), strides=(2,2)))
-        model.add(Dropout(0.25))
-
-        model.add(Flatten())
-
-        model.add(Dense(1024, activation='relu'))
-        model.add(Dropout(0.5))
-        model.add(Dense(1024, activation='relu'))
-        model.add(Dropout(0.5))
-
-        model.add(Dense(classes_num, activation='softmax'))
-        
-        return model
-
-    def vgg16(self, classes_num, input_shape):
-        '''
-        '''
-        model = Sequential()
-        model.add(Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=input_shape))
-        model.add(Conv2D(64, (3, 3), activation='relu', padding='same'))
-        model.add(MaxPooling2D((2, 2), strides=(2, 2)))
-
-        model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-        model.add(Conv2D(128, (3, 3), activation='relu', padding='same'))
-        model.add(MaxPooling2D((2, 2), strides=(2, 2)))
-
-        model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-        model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-        model.add(Conv2D(256, (3, 3), activation='relu', padding='same'))
-        model.add(MaxPooling2D((2, 2), strides=(2, 2)))
-
-        model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-        model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-        model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-        model.add(MaxPooling2D((2, 2), strides=(2, 2)))
-
-        model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-        model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-        model.add(Conv2D(512, (3, 3), activation='relu', padding='same'))
-        model.add(MaxPooling2D((2, 2), strides=(2, 2)))
-
-        model.add(Flatten())
-        model.add(Dense(4096, activation='relu'))
-        model.add(Dense(4096, activation='relu'))
-        model.add(Dense(classes_num, activation='softmax'))
-
-        return model

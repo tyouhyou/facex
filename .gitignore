@@ -7,9 +7,7 @@ __pycache__/
 *.so
 
 .vscode
-fer/
-fer+/
-dlib/
+datasets/
 
 # Distribution / packaging
 .Python
