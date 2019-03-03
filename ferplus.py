@@ -8,6 +8,7 @@ from kmodel import KModel as km
 IMG_WIDTH = 48
 IMG_HEIGHT = 48
 CHANNEL = 1
+EMOTIONS = ['neutral','happiness','surprise','sadness','anger','disgust','fear','contempt','unknown']
 
 def load_model(model_data_folder='data', model_data_name='fer+_simple_cnn'):
     '''
@@ -27,11 +28,13 @@ def load_model(model_data_folder='data', model_data_name='fer+_simple_cnn'):
 
 def predict(data, width=48, height=48, model=None):
     if type(data) is str:
-        result = km().predict_image(data, model=model, target_height=48, target_width=48)
+        result = km().predict_image(data, model=model, target_height=48, target_width=48, channel_last=True)
     else:
         result = km().predict(data, model)
 
-    return result
+    rst = {EMOTIONS[idx] : round(val, 2) for idx, val in enumerate(result)}
+
+    return rst
 
 def extract_imgs(fer_csv='fer\\fer2013.csv', img_folder='fer+\\img'):
     if not os.path.exists(img_folder):

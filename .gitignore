@@ -9,6 +9,7 @@ __pycache__/
 .vscode
 fer/
 fer+/
+dlib/
 
 # Distribution / packaging
 .Python

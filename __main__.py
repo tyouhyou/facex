@@ -11,5 +11,6 @@ if __name__ == "__main__":
     print(fp.predict(r'e:\\temp\\c.png', model=model))
     print(fp.predict(r'e:\\temp\\d.jpg', model=model))
     print(fp.predict(r'e:\\temp\\e.jpg', model=model))
+    print(fp.predict(r'e:\\temp\\f.jpg', model=model))
 
     print(datetime.datetime.now())
