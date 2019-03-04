@@ -10,19 +10,19 @@ IMG_HEIGHT = 48
 CHANNEL = 1
 EMOTIONS = ['neutral','happiness','surprise','sadness','anger','disgust','fear','contempt','unknown']
 
-def load_model(model_data_folder='data', model_data_name='fer+_simple_cnn'):
+def load_model(data_folder='data', data_name='fer+_simple_cnn', model_name='simple_cnn'):
     '''
     make model for facial express
     '''
     m = km()
     model = None
 
-    if (os.path.exists(os.path.join(model_data_folder, model_data_name + '.h5')) and
-        os.path.exists(os.path.join(model_data_folder, model_data_name + '.json'))):
-        model = m.load_model(data_name=model_data_name)
+    if (os.path.exists(os.path.join(data_folder, data_name + '.h5')) and
+        os.path.exists(os.path.join(data_folder, data_name + '.json'))):
+        model = m.load_model(data_name=data_name)
     else:
         dataset = load_data()
-        model = km().make_model(dataset, data_name='fer+_simple_cnn')
+        model = km().make_model(dataset, data_folder=data_folder, data_name=data_name, model_name=model_name)
 
     return model
 

@@ -1,6 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D, AveragePooling2D
+import keras as K
 
 '''
 neural networks defined to keras model
@@ -8,6 +9,7 @@ neural networks defined to keras model
 
 def simple_cnn(classes_num, input_shape):
     '''
+    it seems this model perform better on cntk than tensorflow
     '''
     model = Sequential()
     model.add(Conv2D(64, (3, 3), activation='relu', input_shape=input_shape))
@@ -31,7 +33,9 @@ def simple_cnn(classes_num, input_shape):
 
     model.add(Dense(classes_num, activation='softmax'))
     
-    return model
+    loss = K.losses.categorical_crossentropy
+    opt = K.optimizers.Adadelta()
+    return model, loss, opt
 
 def vgg16(classes_num, input_shape):
     '''
@@ -65,8 +69,10 @@ def vgg16(classes_num, input_shape):
     model.add(Dense(4096, activation='relu'))
     model.add(Dense(classes_num, activation='softmax'))
 
-    return model
+    loss = K.losses.categorical_crossentropy
+    sgd = K.optimizers.SGD(lr=1e-3, decay=1e-6, momentum=0.9, nesterov=True)
+    return model, loss, sgd
 
-def vgg16_tuning(classes_num, input_shape):
+def vgg16_fine_tuning(classes_num, input_shape):
     #TODO
     pass

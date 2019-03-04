@@ -19,7 +19,7 @@ class KModel:
         '''
         self._models = {
             'simple_cnn' : (knm.simple_cnn, 256, 30),
-            'vgg16'     : (knm.vgg16, 128, 12),
+            'vgg16'     : (knm.vgg16, 1024, 30),
         }
 
         self._model = None
@@ -88,22 +88,16 @@ class KModel:
             bk.set_image_data_format('channels_last')
 
         model_, batch_num, epochs = self._get_model_func_by_name(model_name)
-        model = model_(classes_num, input_shape)
+        model, loss, opt = model_(classes_num, input_shape)
 
-        if None == loss_fun:
-            loss_fun = K.losses.categorical_crossentropy
-        else:
-            #TODO: loss function from string parameter
-            pass
+        if not None == loss_fun:
+            loss = loss_fun
 
-        if None == optimizer:
-            optimizer = K.optimizers.Adadelta()
-        else:
-            #TODO: optimizer from string parameter
-            pass
+        if not None == optimizer:
+            opt = optimizer
         
-        model.compile(loss=loss_fun,
-                      optimizer=optimizer,
+        model.compile(loss=loss,
+                      optimizer=opt,
                       metrics=[metrics])
         
         model.fit(train_images, train_labels, 

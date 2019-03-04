@@ -8,6 +8,7 @@ __pycache__/
 
 .vscode
 datasets/
+keep/
 
 # Distribution / packaging
 .Python
