@@ -93,7 +93,7 @@ def load_ferp_data(fernewcsv=r'datasets\\fer+\\fer2013new.csv', img_folder=r'dat
         ferp_data = {
             'channels_first': False,
             'classes_num': classes_num,
-            'input_shape': (IMG_WIDTH, IMG_HEIGHT, CHANNEL),
+            'input_shape': (IMG_HEIGHT, IMG_WIDTH, CHANNEL),
             'train_data': (np.asarray(train_labels), np.asarray(train_images)),
             'test_data': (np.asarray(test_labels), np.asarray(test_images)),
             'val_data' : (np.asarray(val_labels), np.asarray(val_images))

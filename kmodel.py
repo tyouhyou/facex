@@ -56,7 +56,7 @@ class KModel:
         if channel_last:
             bk.set_image_data_format('channels_last')
 
-        img = image.load_img(img_file, color_mode=color_mode, target_size=(target_width, target_height))
+        img = image.load_img(img_file, color_mode=color_mode, target_size=(target_height, target_width))
         return self.predict(image.img_to_array(img), model)
         
     def predict(self, img_array, model=None):
